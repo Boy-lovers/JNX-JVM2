@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zalith JVM Generator</title>
+
+  <!-- Google Fonts: Space Grotesk & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;800&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================
+       GLASS BRUTALISM DESIGN SYSTEM (WITH BLUR)
+       ========================================= */
+    :root {
+      --bg-gradient: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #e0f2fe 100%);
+      --main: #ff5252;
+      --secondary: #06b6d4;
+      --accent: #facc15;
+      --purple: #8b5cf6;
+      --dark: #0f172a;
+      --border-width: 3.5px;
+      --shadow-offset: 6px;
+      
+      /* Glassmorphism Blur Variables */
+      --glass-bg: rgba(255, 255, 255, 0.75);
+      --glass-blur: blur(12px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--dark);
+      font-family: 'JetBrains Mono', monospace;
+      padding: 20px;
+      padding-bottom: 100px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* Ambient Decorative Shapes behind Glass */
+    .bg-shape-1 {
+      position: fixed;
+      top: 5%;
+      left: 10%;
+      width: 250px;
+      height: 250px;
+      background: #f472b6;
+      border: var(--border-width) solid var(--dark);
+      border-radius: 50%;
+      z-index: -1;
+    }
+
+    .bg-shape-2 {
+      position: fixed;
+      bottom: 15%;
+      right: 8%;
+      width: 300px;
+      height: 300px;
+      background: #38bdf8;
+      border: var(--border-width) solid var(--dark);
+      transform: rotate(15deg);
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: 0 auto;
+    }
+
+    /* Header with Glass Blur */
+    header {
+      background: rgba(250, 204, 21, 0.85);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: var(--border-width) solid var(--dark);
+      box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--dark);
+      padding: 24px;
+      margin-bottom: 25px;
+      transform: rotate(-1deg);
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.2rem;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.9);
+      display: inline-block;
+      padding: 2px 8px;
+      border: 2px solid var(--dark);
+      font-size: 0.85rem;
+    }
+
+    /* Cards with Glass Blur */
+    .brutal-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: var(--border-width) solid var(--dark);
+      box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--dark);
+      padding: 24px;
+      margin-bottom: 25px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 0.95rem;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(4px);
+      border: var(--border-width) solid var(--dark);
+      box-shadow: 3px 3px 0px var(--dark);
+      outline: none;
+      transition: all 0.1s ease;
+    }
+
+    input:focus, select:focus {
+      background: #fef08a;
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0px var(--dark);
+    }
+
+    .preset-box {
+      background: rgba(224, 242, 254, 0.85);
+      border: 2.5px solid var(--dark);
+      padding: 14px;
+      margin-bottom: 20px;
+    }
+
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(241, 245, 249, 0.85);
+      padding: 10px;
+      border: 2px solid var(--dark);
+      font-weight: 800;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--main);
+      cursor: pointer;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      width: 100%;
+      padding: 16px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: var(--dark);
+      background: var(--secondary);
+      border: var(--border-width) solid var(--dark);
+      box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--dark);
+      cursor: pointer;
+      transition: all 0.1s ease;
+    }
+
+    .btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 8px 8px 0px var(--dark);
+      background: #22d3ee;
+    }
+
+    .btn:active {
+      transform: translate(3px, 3px);
+      box-shadow: 2px 2px 0px var(--dark);
+    }
+
+    .btn-copy {
+      background: var(--main);
+      color: #fff;
+      margin-top: 15px;
+    }
+
+    .btn-copy:hover {
+      background: #ff6b6b;
+    }
+
+    /* Output Section */
+    textarea {
+      width: 100%;
+      height: 180px;
+      padding: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 500;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(8px);
+      color: #4ade80;
+      border: var(--border-width) solid var(--dark);
+      box-shadow: 4px 4px 0px var(--dark);
+      resize: vertical;
+      outline: none;
+      word-break: break-all;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      border: 2px solid var(--dark);
+      margin-bottom: 12px;
+    }
+
+    .tag-preset { background: #facc15; }
+    .tag-mem { background: #f472b6; }
+    .tag-g1 { background: #38bdf8; }
+    .tag-opt { background: #a3e635; }
+
+    /* =========================================
+       MUSIC PLAYER BAR (GLASSMORPHISM)
+       ========================================= */
+    .music-bar {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 40px);
+      max-width: 850px;
+      background: rgba(139, 92, 246, 0.85);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      color: #fff;
+      border: var(--border-width) solid var(--dark);
+      box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--dark);
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      z-index: 100;
+    }
+
+    .music-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .music-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-music {
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--dark);
+      border: 2px solid var(--dark);
+      box-shadow: 2px 2px 0px var(--dark);
+      padding: 6px 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 900;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.1s ease;
+    }
+
+    .btn-music:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0px var(--dark);
+      background: var(--accent);
+    }
+
+    .btn-music:active {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0px var(--dark);
+    }
+
+    /* Toast Notification */
+    #toast {
+      visibility: hidden;
+      min-width: 220px;
+      background-color: var(--accent);
+      color: var(--dark);
+      font-weight: 900;
+      text-align: center;
+      border: 3px solid var(--dark);
+      box-shadow: 4px 4px 0px var(--dark);
+      padding: 12px;
+      position: fixed;
+      z-index: 999;
+      bottom: 90px;
+      right: 30px;
+      text-transform: uppercase;
+    }
+
+    #toast.show {
+      visibility: visible;
+      animation: fadein 0.3s, fadeout 0.5s 2.5s;
+    }
+
+    @keyframes fadein {
+      from { bottom: 60px; opacity: 0; }
+      to { bottom: 90px; opacity: 1; }
+    }
+
+    @keyframes fadeout {
+      from { bottom: 90px; opacity: 1; }
+      to { bottom: 60px; opacity: 0; }
+    }
+
+    @media (max-width: 650px) {
+      body { padding: 12px; padding-bottom: 100px; }
+      h1 { font-size: 1.6rem; }
+      header { transform: none; }
+      .grid-2 { grid-template-columns: 1fr; gap: 0; }
+      .music-bar { padding: 8px 12px; }
+      .music-info { font-size: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Decorative Shapes behind Blur -->
+  <div class="bg-shape-1"></div>
+  <div class="bg-shape-2"></div>
+
+  <div class="container">
+    
+    <!-- HEADER -->
+    <header>
+      <h1>⚡ ZALITH JVM GEN</h1>
+      <div class="subtitle">AUTOMATED GLASS-BRUTALIST JVM BUILDER</div>
+    </header>
+
+    <!-- FORM INPUT -->
+    <div class="brutal-card">
+      
+      <!-- PRESET SELECTOR -->
+      <div class="preset-box">
+        <span class="tag tag-preset">⚡ LOAD INSTANT PRESETS</span>
+        <label for="presetSelect">Pilih Profil Perangkat:</label>
+        <select id="presetSelect" onchange="applyPreset()">
+          <option value="kentang3">1. HP Kentang (RAM 3 GB - Alokasi 1024M)</option>
+          <option value="kentang4">2. HP Kentang (RAM 4 GB - Alokasi 1792M)</option>
+          <option value="mid6" selected>3. HP Mid (RAM 6 GB - Alokasi 2560M)</option>
+          <option value="mid8">4. HP Mid (RAM 8 GB - Alokasi 3072M)</option>
+          <option value="kenceng8">5. HP Kenceng (RAM 8 GB - Alokasi 4096M)</option>
+          <option value="kenceng12">6. HP Kenceng (RAM 12 GB - Alokasi 6144M)</option>
+          <option value="shader">7. Mode Heavy Shader (RAM 8-12 GB - Alokasi 4096M)</option>
+        </select>
+      </div>
+
+      <!-- 1. RAM Allocation -->
+      <div class="form-group">
+        <span class="tag tag-mem">1. MEMORY ALLOCATION (-Xmx / -Xms)</span>
+        <label for="ramInput">RAM Alokasi (MB):</label>
+        <input type="number" id="ramInput" value="2560" oninput="generateJVM()">
+      </div>
+
+      <!-- 2. G1GC Tweak Parameters -->
+      <div class="form-group">
+        <span class="tag tag-g1">2. G1GC PARAMETERS</span>
+        
+        <div class="grid-2">
+          <div>
+            <label for="heapRegion">G1HeapRegionSize:</label>
+            <select id="heapRegion" onchange="generateJVM()">
+              <option value="4M">4M</option>
+              <option value="8M" selected>8M</option>
+              <option value="16M">16M</option>
+            </select>
+          </div>
+          <div>
+            <label for="maxPause">MaxGCPauseMillis (30-100):</label>
+            <input type="number" id="maxPause" value="60" oninput="generateJVM()">
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 10px;">
+          <div>
+            <label for="newSize">G1NewSizePercent (10-30%):</label>
+            <input type="number" id="newSize" value="25" oninput="generateJVM()">
+          </div>
+          <div>
+            <label for="maxNewSize">G1MaxNewSizePercent (25-60%):</label>
+            <input type="number" id="maxNewSize" value="45" oninput="generateJVM()">
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 10px;">
+          <div>
+            <label for="reservePct">G1ReservePercent (%):</label>
+            <input type="number" id="reservePct" value="15" oninput="generateJVM()">
+          </div>
+          <div>
+            <label for="wastePct">G1HeapWastePercent (%):</label>
+            <input type="number" id="wastePct" value="5" oninput="generateJVM()">
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 10px;">
+          <div>
+            <label for="mixedCount">G1MixedGCCountTarget:</label>
+            <input type="number" id="mixedCount" value="10" oninput="generateJVM()">
+          </div>
+          <div>
+            <label for="liveThreshold">G1MixedGCLiveThresholdPercent (%):</label>
+            <input type="number" id="liveThreshold" value="85" oninput="generateJVM()">
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Extra Flags & Renderer -->
+      <div class="form-group">
+        <span class="tag tag-opt">3. EXTRA FLAGS & RENDERER</span>
+        
+        <div class="checkbox-group">
+          <label class="checkbox-item">
+            <input type="checkbox" id="flagDeduplication" checked onchange="generateJVM()">
+            UseStringDeduplication
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="flagParallelRef" checked onchange="generateJVM()">
+            ParallelRefProcEnabled
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="flagOpenGL" checked onchange="generateJVM()">
+            libgl4es_115.so Driver
+          </label>
+        </div>
+      </div>
+
+      <!-- Custom Input -->
+      <div class="form-group">
+        <label for="customFlags">Tambahan Flags (Optional):</label>
+        <input type="text" id="customFlags" placeholder="-XX:+AlwaysPreTouch ..." oninput="generateJVM()">
+      </div>
+
+      <!-- Generate Button -->
+      <button class="btn" onclick="generateJVM()">🚀 RE-GENERATE CONFIG</button>
+    </div>
+
+    <!-- OUTPUT SECTION -->
+    <div class="brutal-card">
+      <label for="output">RESULT / OUTPUT JVM ARGUMENTS:</label>
+      <textarea id="output" readonly placeholder="Klik RE-GENERATE CONFIG..."></textarea>
+      <button class="btn btn-copy" onclick="copyToClipboard()">📋 COPY TO CLIPBOARD</button>
+    </div>
+
+  </div>
+
+  <!-- MUSIC PLAYER BAR -->
+  <div class="music-bar">
+    <div class="music-info">
+      <span>🎵 Playing: MONTAGEM ZORA - WUYS x KIT</span>
+    </div>
+    <div class="music-controls">
+      <button class="btn-music" id="playBtn" onclick="togglePlay()">PLAY ▶</button>
+      <button class="btn-music" id="muteBtn" onclick="toggleMute()">MUTE 🔊</button>
+    </div>
+  </div>
+
+  <!-- AUDIO ELEMENT -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="https://c.termai.cc/v165/WCIsD.mp4" type="audio/mp4">
+  </audio>
+
+  <!-- TOAST -->
+  <div id="toast">Berhasil Disalin! 💥</div>
+
+  <!-- SCRIPT -->
+  <script>
+    const presets = {
+      kentang3: { ram: 1024, region: '4M', newSize: 25, maxNewSize: 45, mixedCount: 6, pause: 80, custom: '' },
+      kentang4: { ram: 1792, region: '4M', newSize: 25, maxNewSize: 45, mixedCount: 6, pause: 80, custom: '' },
+      mid6: { ram: 2560, region: '8M', newSize: 25, maxNewSize: 45, mixedCount: 10, pause: 60, custom: '-XX:+AlwaysPreTouch' },
+      mid8: { ram: 3072, region: '8M', newSize: 25, maxNewSize: 45, mixedCount: 10, pause: 60, custom: '-XX:+AlwaysPreTouch' },
+      kenceng8: { ram: 4096, region: '8M', newSize: 25, maxNewSize: 45, mixedCount: 14, pause: 45, custom: '-XX:+AlwaysPreTouch -XX:+UseNUMA -XX:+DisableExplicitGC' },
+      kenceng12: { ram: 6144, region: '8M', newSize: 25, maxNewSize: 45, mixedCount: 14, pause: 45, custom: '-XX:+AlwaysPreTouch -XX:+UseNUMA -XX:+DisableExplicitGC' },
+      shader: { ram: 4096, region: '16M', newSize: 15, maxNewSize: 35, mixedCount: 14, pause: 45, custom: '-XX:+AlwaysPreTouch -XX:+UseNUMA -XX:+DisableExplicitGC' }
+    };
+
+    function applyPreset() {
+      const selectedKey = document.getElementById('presetSelect').value;
+      const data = presets[selectedKey];
+
+      if (!data) return;
+
+      document.getElementById('ramInput').value = data.ram;
+      document.getElementById('heapRegion').value = data.region;
+      document.getElementById('newSize').value = data.newSize;
+      document.getElementById('maxNewSize').value = data.maxNewSize;
+      document.getElementById('mixedCount').value = data.mixedCount;
+      document.getElementById('maxPause').value = data.pause;
+      document.getElementById('customFlags').value = data.custom;
+
+      generateJVM();
+    }
+
+    function generateJVM() {
+      const ram = document.getElementById('ramInput').value || 2048;
+      const heapRegion = document.getElementById('heapRegion').value;
+      const newSize = document.getElementById('newSize').value || 25;
+      const maxNewSize = document.getElementById('maxNewSize').value || 45;
+      const wastePct = document.getElementById('wastePct').value || 5;
+      const mixedCount = document.getElementById('mixedCount').value || 8;
+      const reservePct = document.getElementById('reservePct').value || 15;
+      const maxPause = document.getElementById('maxPause').value || 60;
+      const liveThreshold = document.getElementById('liveThreshold').value || 85;
+      const custom = document.getElementById('customFlags').value.trim();
+
+      let flags = [];
+
+      flags.push(`-Xmx${ram}M`);
+      flags.push(`-Xms${ram}M`);
+      flags.push('-XX:+UseG1GC');
+      flags.push(`-XX:G1HeapRegionSize=${heapRegion}`);
+      flags.push('-XX:+UnlockExperimentalVMOptions');
+      flags.push(`-XX:G1NewSizePercent=${newSize}`);
+      flags.push(`-XX:G1MaxNewSizePercent=${maxNewSize}`);
+      flags.push(`-XX:G1HeapWastePercent=${wastePct}`);
+      flags.push(`-XX:G1MixedGCCountTarget=${mixedCount}`);
+      flags.push(`-XX:G1ReservePercent=${reservePct}`);
+      flags.push(`-XX:MaxGCPauseMillis=${maxPause}`);
+      flags.push(`-XX:G1MixedGCLiveThresholdPercent=${liveThreshold}`);
+
+      if (document.getElementById('flagDeduplication').checked) {
+        flags.push('-XX:+UseStringDeduplication');
+      }
+      if (document.getElementById('flagParallelRef').checked) {
+        flags.push('-XX:+ParallelRefProcEnabled');
+      }
+      if (custom) {
+        flags.push(custom);
+      }
+      if (document.getElementById('flagOpenGL').checked) {
+        flags.push('-Dorg.lwjgl.opengl.libname=libgl4es_115.so');
+      }
+
+      document.getElementById('output').value = flags.join(' ');
+    }
+
+    function copyToClipboard() {
+      const outputText = document.getElementById('output');
+      if (!outputText.value) return;
+
+      outputText.select();
+      outputText.setSelectionRange(0, 99999);
+
+      navigator.clipboard.writeText(outputText.value).then(() => {
+        showToast();
+      }).catch(() => {
+        document.execCommand('copy');
+        showToast();
+      });
+    }
+
+    function showToast() {
+      const toast = document.getElementById("toast");
+      toast.className = "show";
+      setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+    }
+
+    /* MUSIC CONTROLLER LOGIC */
+    const music = document.getElementById('bgMusic');
+    const playBtn = document.getElementById('playBtn');
+    const muteBtn = document.getElementById('muteBtn');
+
+    function togglePlay() {
+      if (music.paused) {
+        music.play().then(() => {
+          playBtn.innerText = 'PAUSE ⏸';
+        }).catch(err => {
+          console.log("Autoplay blocked/failed: ", err);
+        });
+      } else {
+        music.pause();
+        playBtn.innerText = 'PLAY ▶';
+      }
+    }
+
+    function toggleMute() {
+      music.muted = !music.muted;
+      muteBtn.innerText = music.muted ? 'UNMUTE 🔇' : 'MUTE 🔊';
+    }
+
+    document.addEventListener('click', function startAudioOnUserInteraction() {
+      if (music.paused) {
+        music.play().then(() => {
+          playBtn.innerText = 'PAUSE ⏸';
+        }).catch(() => {});
+      }
+      document.removeEventListener('click', startAudioOnUserInteraction);
+    }, { once: true });
+
+    window.onload = applyPreset;
+  </script>
+</body>
+</html>
